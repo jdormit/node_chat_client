@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>
+		<script src='/socket.io/socket.io.js'></script>
+		<script>
+			var socket = io.connect('http://localhost:8080');
+			$(document).ready( function() {
+				$('#chat_form').submit(function(e) {
+					e.preventDefault();
+					var message = $('#message').val();
+//					var user_handle = $('#userhandle').val();
+					socket.emit('messages', message);
+				});
+				socket.on('connect', function(data) {
+					handle = prompt("What do we call you?");
+					socket.emit('join',handle);
+				});
+				socket.on('messages', function(data) {
+					$('#chat_box').append("<br>"+data);
+					$('#chat_box').scrollTop($('#chat_box')[0].scrollHeight);
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="chat_box" style="width:900px; height:500px; border-style:solid; margin-left: auto; margin-right: auto; overflow:auto"></div>
+		<form id='chat_form' style="text-align:center">
+<!--		User Handle:
+			<br>
+			<input type="text" id="userhandle" value="s0me_br0"> 
+			<br>
+-->
+			Type messages here: 
+			<br>
+			<input type="text" id="message"> 
+			<input type="submit" value="Send">
+		</form>
+	</body>
+</html>
